@@ -14,8 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('subscription/create', [SubscriptionController::class, 'create'])->name('subscription-create');
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [SubscriptionController::class, 'create'])->name('subscription-create');
