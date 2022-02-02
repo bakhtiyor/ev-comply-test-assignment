@@ -31,7 +31,7 @@
                     email: null
                 },
                 formdata: {
-                    email: 'i@bakhtiyor.tj'
+                    email: null
                 },
                 errorClass: 'is-invalid',
                 loading: false,
@@ -61,6 +61,7 @@
                         })
                         .finally(()=>this.loading = false)
                 }
+                this.loading = false
                 e.preventDefault();
             },
             resetErrors: function(){
