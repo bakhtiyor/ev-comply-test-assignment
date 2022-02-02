@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Repository\SubscriptionRepositoryInterface;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\Validator;
 
 class SubscriptionController extends Controller
 {
+    private $subscriberRepository;
+
+    public function __construct(SubscriptionRepositoryInterface $subscriberRepository)
+    {
+        $this->subscriberRepository = $subscriberRepository;
+    }
+
     public function create()
     {
         return view('subscriptions.create');
@@ -14,8 +22,20 @@ class SubscriptionController extends Controller
 
     public function store(Request $request)
     {
-//        return response()->json(['message' => 'duplicate'], 409);
-        return response()->json(['message'=>'ok'], 201);
-        Log::info($request->get('email'));
+
+        $rules = array(
+            'email' => 'required|email|unique:subscribers,email'
+        );
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $errorList = array();
+            foreach ($validator->messages()->all() as $error)
+                $errorList[] = "- $error";
+            return response()->json(['message'=>implode('<br>', $errorList)], 400);
+        }else{
+            $collection = $request->except(['_token','_method']);
+            $this->subscriberRepository->store($collection);
+            return response()->json(['message'=>'ok'], 201);
+        }
     }
 }
